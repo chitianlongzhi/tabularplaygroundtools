@@ -1,3 +1,3 @@
 class tabularplaygroundtools:
-  def __init__(self):
-    print('hello')
+  def __init__(self, param):
+    print(param['test'])
