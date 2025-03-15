@@ -2,11 +2,11 @@ class tabularplaygroundtools:
   def __init__(self, param):
     print('# Loading Data')
     print('import pandas as pd')
-    if not 'train file' in param:
-      print('ERROR: train file')
+    if not 'train.file' in param:
+      print('ERROR: train.file')
     print('train = pd.read_csv(\'{}\')'.format(param['train.file']))
-    if not 'test file' in param:
-      print('ERROR: test file')
+    if not 'test.file' in param:
+      print('ERROR: test.file')
     print('test = pd.read_csv(\'{}\')'.format(param['test.file']))
     print('# Identifying Missing Values')
     print('train.isnull().sum()')
@@ -17,7 +17,7 @@ class tabularplaygroundtools:
     for c, v in test.isnull().sum().items():
       if v>0:
         print('test[\'{}\'] = test[\'{}\'].fillna(test[\'{}\'].median())'.format(c, c, c))
-    if 'Correlation Analysis' in param:
+    if 'CorrelationAnalysis' in param:
       print('# Correlation Analysis')
       print('import matplotlib.pyplot as plt')
       print('import seaborn as sns')
