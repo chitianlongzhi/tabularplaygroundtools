@@ -5,9 +5,11 @@ class tabularplaygroundtools:
     if not 'train.file' in param:
       print('ERROR: train.file')
     print('train = pd.read_csv(\'{}\')'.format(param['train.file']))
+    train = pd.read_csv(param['train.file'])
     if not 'test.file' in param:
       print('ERROR: test.file')
     print('test = pd.read_csv(\'{}\')'.format(param['test.file']))
+    test = pd.read_csv(param['test.file'])
     print('# Identifying Missing Values')
     print('train.isnull().sum()')
     for c, v in train.isnull().sum().items():
