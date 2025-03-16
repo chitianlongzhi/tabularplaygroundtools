@@ -1,25 +1,54 @@
+# !(if [ -d tabularplaygroundtools ]; then rm -rf tabularplaygroundtools ; fi)
+# !git clone https://github.com/chitianlongzhi/tabularplaygroundtools.git
+# !cat tabularplaygroundtools/tabularplaygroundtools.py
+# import tabularplaygroundtools.tabularplaygroundtools
+# param = {
+#     'train.file': '/kaggle/input/playground-series-s5e3/train.csv',
+#     'test.file': '/kaggle/input/playground-series-s5e3/test.csv',
+#     'CorrelationAnalysis': True,
+#     'target': 'rainfall',
+#     'type': 'LSTM'
+# }
+# tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
 class tabularplaygroundtools:
   def __init__(self, param):
+    if not 'type' in param:
+      print('ERROR: type')
+      return
     print('# Loading Data')
     print('import pandas as pd')
     if not 'train.file' in param:
       print('ERROR: train.file')
+      return
     print('train = pd.read_csv(\'{}\')'.format(param['train.file']))
     train = pd.read_csv(param['train.file'])
     if not 'test.file' in param:
       print('ERROR: test.file')
+      return
     print('test = pd.read_csv(\'{}\')'.format(param['test.file']))
     test = pd.read_csv(param['test.file'])
-    print('# Identifying Missing Values')
-    print('print(train.isnull().sum())')
-    for c, v in train.isnull().sum().items():
-      if v>0:
-        print('train[\'{}\'] = train[\'{}\'].fillna(train[\'{}\'].median())'.format(c, c, c))
-    print('print(test.isnull().sum())')
-    for c, v in test.isnull().sum().items():
-      if v>0:
-        print('test[\'{}\'] = test[\'{}\'].fillna(test[\'{}\'].median())'.format(c, c, c))
+    print('# Missing Values')
+    if 'SimpleImputer' in param:
+      print('from sklearn.impute import SimpleImputer')
+      print('imputer = SimpleImputer(strategy=\'mean\')')
+      print('print(train.isnull().sum())')
+      for c, v in train.isnull().sum().items():
+        if v>0:
+          print('train[[\'{}\']] = imputer.fit_transform(train[[\'{}\']])'.format(c, c))
+      print('print(test.isnull().sum())')
+      for c, v in test.isnull().sum().items():
+        if v>0:
+          print('test[[\'{}\']] = imputer.fit_transform(test[[\'{}\']])'.format(c, c))
+    else:
+      print('print(train.isnull().sum())')
+      for c, v in train.isnull().sum().items():
+        if v>0:
+          print('train[\'{}\'] = train[\'{}\'].fillna(train[\'{}\'].median())'.format(c, c, c))
+      print('print(test.isnull().sum())')
+      for c, v in test.isnull().sum().items():
+        if v>0:
+          print('test[\'{}\'] = test[\'{}\'].fillna(test[\'{}\'].median())'.format(c, c, c))
     if 'CorrelationAnalysis' in param:
       print('# Correlation Analysis')
       print('import matplotlib.pyplot as plt')
@@ -32,17 +61,20 @@ class tabularplaygroundtools:
       print('plt.show()')
     if not 'target' in param:
       print('ERROR: target')
+    print('# Scaling')
+    if 'RobustScaler' in param:
+      print('from sklearn.preprocessing import RobustScaler')
+      print('scaler = RobustScaler()')
+    else:
+      print('from sklearn.preprocessing import StandardScaler')
+      print('scaler = StandardScaler()')
+    print('train = scaler.fit_transform(train)')
     print('# Split data')
     print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
     print('y = train[\'{}\']'.format(param['target']))
     print('from sklearn.model_selection import train_test_split')
     print('X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.15, random_state=1)')
-    print('# Scaling')
-    print('from sklearn.preprocessing import StandardScaler')
-    print('scaler = StandardScaler()')
-    print('X_train = scaler.fit_transform(X_train)')
-    print('X_val = scaler.transform(X_val)')
-    if 'type' in param and param['type'] == 'LSTM':
+    if param['type'] == 'LSTM':
       print('# reshape for LSTM')
       print('X_train3 = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))')
       print('X_val3 = X_val.reshape((X_val.shape[0], 1, X_val.shape[1]))')
@@ -89,6 +121,7 @@ class tabularplaygroundtools:
       print('      verbose=1')
       print(')')
       print('# fitting')
+      print('%%time')
       print('epochs = 100')
       print('batch_size = 32')
       print('history = model.fit(')
@@ -100,9 +133,49 @@ class tabularplaygroundtools:
       print('    verbose=1')
       print(')')
       print('# predicting')
+      print('%%time')
       print('X_test = test.drop([\'id\',], axis=1)')
       print('X_test = scaler.transform(X_test)')
       print('X_test3 = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))')
       print('test[\'{}\'] = model.predict(X_test3)'.format(param['target']))
+      print('submission = test[[\'id\', \'{}\']]'.format(param['target']))
+      print('submission.to_csv(\'submission.csv\', index=False)')
+    if param['type'] == 'Tensorflow':
+      print('import warnings')
+      print('warnings.filterwarnings(\'ignore\')')
+      print('import tensorflow as tf')
+      print('print(tf.test.is_gpu_available())')
+      print('print(tf.test.is_built_with_cuda())')
+      print('# LSTM model')
+      print('model = tf.keras.models.Sequential()')
+      print('model.add(tf.keras.layers.Dense(128, activation=\'relu\', use_bias=True, input_shape=(X_train.shape[1],)))')
+      print('model.add(tf.keras.layers.Flatten())')
+      print('model.add(tf.keras.layers.Dropout(0.25))')
+      print('model.add(tf.keras.layers.BatchNormalization())')
+      print('model.add(tf.keras.layers.Dense(units=1, activation=\'sigmoid\'))')
+      print('auc = tf.keras.metrics.AUC(name=\'aucroc\')')
+      print('optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.00001, rho=0.9, epsilon=1e-08, decay=0.0)')
+      print('model.compile(loss=\'binary_crossentropy\', optimizer=optimizer, metrics=[\'accuracy\', auc])')
+      print('model.summary()')
+      print('tf.keras.utils.plot_model(model, show_shapes=True)')
+      print('# Define callbacks')
+      print('earlystopping = tf.keras.callbacks.EarlyStopping(monitor=\'val_loss\', min_delta=0, patience=5, verbose=1, restore_best_weights=True)')
+      print('reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor=\'val_loss\', factor=0.3, patience=3, verbose=1, min_delta=1e-4)')
+      print('callbacks = [earlystopping, reduce_lr]')
+      print('# fitting')
+      print('%%time')
+      print('history = model.fit(')
+      print('    x=X_train, y=y_train,')
+      print('    batch_size=128,')
+      print('    shuffle=True,')
+      print('    epochs=10,')
+      print('    validation_data=(X_valid, y_valid),')
+      print('    callbacks=callbacks')
+      print(')')
+      print('# predicting')
+      print('%%time')
+      print('X_test = test.drop([\'id\',], axis=1)')
+      print('X_test = scaler.transform(X_test)')
+      print('test[\'{}\'] = model.predict(X_test)'.format(param['target']))
       print('submission = test[[\'id\', \'{}\']]'.format(param['target']))
       print('submission.to_csv(\'submission.csv\', index=False)')
