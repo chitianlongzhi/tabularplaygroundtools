@@ -67,6 +67,7 @@ class tabularplaygroundtools:
     print('y = train[\'{}\']'.format(param['target']))
     print('from sklearn.model_selection import train_test_split')
     print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
+    print('X_test = test.drop([\'id\',], axis=1)')
     print('# Scaling')
     if 'RobustScaler' in param:
       print('from sklearn.preprocessing import RobustScaler')
@@ -76,6 +77,7 @@ class tabularplaygroundtools:
       print('scaler = StandardScaler()')
     print('X_train = scaler.fit_transform(X_train)')
     print('X_valid = scaler.transform(X_valid)')
+    print('X_test = scaler.transform(X_test)')
     if param['type'] == 'LSTM':
       print('# reshape for LSTM')
       print('X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))')
@@ -135,8 +137,6 @@ class tabularplaygroundtools:
       print(')')
       print('%%time')
       print('# predicting')
-      print('X_test = test.drop([\'id\',], axis=1)')
-      print('X_test = scaler.transform(X_test)')
       print('X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))')
       print('test[\'{}\'] = model.predict(X_test)'.format(param['target']))
     if param['type'] == 'Tensorflow':
@@ -173,8 +173,6 @@ class tabularplaygroundtools:
       print(')')
       print('%%time')
       print('# predicting')
-      print('X_test = test.drop([\'id\',], axis=1)')
-      print('X_test = scaler.transform(X_test)')
       print('test[\'{}\'] = model.predict(X_test)'.format(param['target']))
     if param['type'] == 'KFold.XGBoost':
       print('# XGBoost model')
@@ -193,6 +191,7 @@ class tabularplaygroundtools:
       print(')')
       print('%%time')
       print('# fitting and predicting in KFold')
+      print('from sklearn.model_selection import KFold')
       print('FOLDS = 5')
       print('kf = KFold(n_splits=FOLDS, shuffle=True, random_state=42)')
       print('oof = np.zeros(len(train))')
