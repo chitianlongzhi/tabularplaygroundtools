@@ -201,6 +201,8 @@ class tabularplaygroundtools:
       print('    y_train = y.loc[train_index]')
       print('    X_valid = X.loc[valid_index,:].copy()')
       print('    y_valid = y.loc[valid_index]')
+      print('    X_train = scaler.transform(X_train)')
+      print('    X_valid = scaler.transform(X_valid)')
       print('    model.fit(')
       print('        X_train, y_train,')
       print('        eval_set=[(X_valid, y_valid)],')
