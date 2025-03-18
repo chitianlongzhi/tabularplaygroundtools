@@ -182,7 +182,7 @@ class tabularplaygroundtools:
       print('X_valid_tensor = torch.Tensor(np.float32(X_valid)).to(device)')
       print('X_test_tensor  = torch.Tensor(np.float32(X_test )).to(device)')
       print('y_train_tensor = torch.Tensor(np.float32(y_train)).to(device).reshape(-1, 1)')
-      print('y_valid_tensor = torch.Tensor(np.float32(y_valid)).to(device).reshape(-1, 1)')')
+      print('y_valid_tensor = torch.Tensor(np.float32(y_valid)).to(device).reshape(-1, 1)')
       print('train_dataset = torch.utils.data.TensorDataset(X_train_tensor, y_train_tensor)')
       print('train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=512, shuffle=True)')
       print('valid_dataset = torch.utils.data.TensorDataset(X_valid_tensor, y_valid_tensor)')
