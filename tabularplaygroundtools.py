@@ -6,8 +6,9 @@
 #     'train.file': '/kaggle/input/playground-series-s5e3/train.csv',
 #     'test.file': '/kaggle/input/playground-series-s5e3/test.csv',
 #     'CorrelationAnalysis': True,
-#     'target': 'rainfall',
-#     'type': 'LSTM'
+#     'SimpleImputer': False,
+#     'KFold': True,
+#     'type': 'LSTM' # Tensorflow, PyTorch, XGBoost
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
@@ -22,36 +23,42 @@ class tabularplaygroundtools:
     if not 'test.file' in param:
       print('ERROR: test.file')
       return
-    if not 'target' in param:
-      print('ERROR: target')
-      return
     print('# Loading Data')
     print('import pandas as pd')
     print('train = pd.read_csv(\'{}\')'.format(param['train.file']))
     train = pd.read_csv(param['train.file'])
     print('test = pd.read_csv(\'{}\')'.format(param['test.file']))
     test = pd.read_csv(param['test.file'])
+    if not 'target' in param:
+      tt = set(train.columns) - set(test.columns)
+      if len(tt)==1:
+        param['target'] = tt.pop()
+        print('target: {}'.format(param['target']))
+      else:
+        print('ERROR: target')
+        return
+    print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
     print('# Missing Values')
-    if 'SimpleImputer' in param:
+    if 'SimpleImputer' in param and param['SimpleImputer']:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
       print('print(train.isnull().sum())')
       for c, v in train.isnull().sum().items():
         if v>0:
-          print('train[[\'{}\']] = imputer.fit_transform(train[[\'{}\']])'.format(c, c))
+          print('train[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
       print('print(test.isnull().sum())')
       for c, v in test.isnull().sum().items():
         if v>0:
-          print('test[[\'{}\']] = imputer.fit_transform(test[[\'{}\']])'.format(c, c))
+          print('test[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
     else:
       print('print(train.isnull().sum())')
       for c, v in train.isnull().sum().items():
         if v>0:
-          print('train[\'{}\'] = train[\'{}\'].fillna(train[\'{}\'].median())'.format(c, c, c))
+          print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
       print('print(test.isnull().sum())')
       for c, v in test.isnull().sum().items():
         if v>0:
-          print('test[\'{}\'] = test[\'{}\'].fillna(test[\'{}\'].median())'.format(c, c, c))
+          print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
     if 'CorrelationAnalysis' in param:
       print('# Correlation Analysis')
       print('import matplotlib.pyplot as plt')
@@ -62,22 +69,28 @@ class tabularplaygroundtools:
       print('sns.heatmap(corr, annot=True, cmap=\'coolwarm\')')
       print('plt.title(\'Correlation Heatmap\')')
       print('plt.show()')
-    print('# Split data')
-    print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
-    print('y = train[\'{}\']'.format(param['target']))
-    print('from sklearn.model_selection import train_test_split')
-    print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
-    print('X_test = test.drop([\'id\',], axis=1)')
     print('# Scaling')
-    if 'RobustScaler' in param:
+    if 'RobustScaler' in param and param['RobustScaler']:
       print('from sklearn.preprocessing import RobustScaler')
       print('scaler = RobustScaler()')
     else:
       print('from sklearn.preprocessing import StandardScaler')
       print('scaler = StandardScaler()')
+    print('scaler.fit_transform(df.values)')
     print('X_train = scaler.fit_transform(X_train)')
     print('X_valid = scaler.transform(X_valid)')
     print('X_test = scaler.transform(X_test)')
+    tab = ''
+    if 'KFold' in param and param['KFold']:
+      print('')
+      tab = '    '
+    else:
+      print('# Split data')
+      print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
+      print('y = train[\'{}\']'.format(param['target']))
+      print('from sklearn.model_selection import train_test_split')
+      print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
+      print('X_test = test.drop([\'id\',], axis=1)')
     if param['type'] == 'LSTM':
       print('# reshape for LSTM')
       print('X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))')
@@ -140,12 +153,12 @@ class tabularplaygroundtools:
       print('X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))')
       print('test[\'{}\'] = model.predict(X_test)'.format(param['target']))
     if param['type'] == 'Tensorflow':
+      print('# Tensorflow model')
       print('import warnings')
       print('warnings.filterwarnings(\'ignore\')')
       print('import tensorflow as tf')
       print('print(tf.test.is_gpu_available())')
       print('print(tf.test.is_built_with_cuda())')
-      print('# Tensorflow model')
       print('model = tf.keras.models.Sequential()')
       print('model.add(tf.keras.layers.Dense(128, activation=\'relu\', use_bias=True, input_shape=(X_train.shape[1],)))')
       print('model.add(tf.keras.layers.Flatten())')
