@@ -5,22 +5,34 @@
 # param = {
 #     'train.file': '/kaggle/input/playground-series-s5e3/train.csv',
 #     'test.file': '/kaggle/input/playground-series-s5e3/test.csv',
-#     'CorrelationAnalysis': True,
+#     'CorrelationAnalysis': False,
 #     'SimpleImputer': False,
+#     'RobustScaler': False,
 #     'KFold': True,
 #     'type': 'LSTM' # Tensorflow, PyTorch, XGBoost
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
+import glob
 class tabularplaygroundtools:
   def __init__(self, param):
     if not 'type' in param:
       print('ERROR: type')
       return
     if not 'train.file' in param:
-      print('ERROR: train.file')
-      return
+      aa = glob.glob('/kaggle/input/*/train.csv')
+      if len(aa)==1:
+        param['train.file'] = aa[0]
+        print('# train: {}'.format(param['train.file']))
+      else:
+        print('ERROR: train.file')
+        return
     if not 'test.file' in param:
+      aa = glob.glob('/kaggle/input/*/test.csv')
+      if len(aa)==1:
+        param['test.file'] = aa[0]
+        print('# test: {}'.format(param['test.file']))
+      else:
       print('ERROR: test.file')
       return
     print('# Loading Data')
@@ -33,7 +45,7 @@ class tabularplaygroundtools:
       tt = set(train.columns) - set(test.columns)
       if len(tt)==1:
         param['target'] = tt.pop()
-        print('target: {}'.format(param['target']))
+        print('# target: {}'.format(param['target']))
       else:
         print('ERROR: target')
         return
@@ -77,13 +89,10 @@ class tabularplaygroundtools:
       print('from sklearn.preprocessing import StandardScaler')
       print('scaler = StandardScaler()')
     print('scaler.fit_transform(df.values)')
-    print('X_train = scaler.fit_transform(X_train)')
-    print('X_valid = scaler.transform(X_valid)')
-    print('X_test = scaler.transform(X_test)')
     if param['type'] == 'LSTM':
       print('# LSTM model')
       print('from tensorflow.keras.layers import LSTM, Dense, Dropout, Input, LeakyReLU, GRU')
-      print('inputs = Input(shape=(X_train.shape[1], X_train.shape[2]))')
+      print('inputs = Input(shape=(1, df.shape[1]))')
       print('x = LSTM(256, activation=\'tanh\', return_sequences=True)(inputs)')
       print('x = Dropout(0.3)(x)')
       print('x = LSTM(128, activation=\'tanh\', return_sequences=True)(x)')
@@ -205,6 +214,9 @@ class tabularplaygroundtools:
       print('from sklearn.model_selection import train_test_split')
       print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
       print('X_test = test.drop([\'id\',], axis=1)')
+      print('X_train = scaler.fit_transform(X_train)')
+      print('X_valid = scaler.transform(X_valid)')
+      print('X_test = scaler.transform(X_test)')
     if param['type'] == 'LSTM':
       print(tab+'# reshape for LSTM')
       print(tab+'X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))')
