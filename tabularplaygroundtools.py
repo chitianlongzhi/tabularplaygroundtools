@@ -71,7 +71,7 @@ class tabularplaygroundtools:
       for c, v in test.isnull().sum().items():
         if v>0:
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
-    if 'CorrelationAnalysis' in param:
+    if 'CorrelationAnalysis' in param and param['CorrelationAnalysis']:
       print('# Correlation Analysis')
       print('import matplotlib.pyplot as plt')
       print('import seaborn as sns')
