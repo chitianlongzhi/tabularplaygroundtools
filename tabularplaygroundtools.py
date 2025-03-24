@@ -233,7 +233,7 @@ class tabularplaygroundtools:
       print(tab+'    callbacks=[early_stopping, reduce_lr],')
       print(tab+'    verbose=1')
       print(tab+')')
-      print(tab+'pred += model.predict(X_test)'.format(param['target']))
+      print(tab+'pred += model.predict(X_test)[0]'.format(param['target']))
     if param['type'] == 'Tensorflow':
       print(tab+'history = model.fit(')
       print(tab+'    x=X_train, y=y_train,')
