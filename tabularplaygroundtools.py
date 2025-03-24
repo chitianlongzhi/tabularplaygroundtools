@@ -82,13 +82,27 @@ class tabularplaygroundtools:
       print('plt.title(\'Correlation Heatmap\')')
       print('plt.show()')
     print('# Scaling')
+    if 'KFold' in param and param['KFold']:
+      pass
+    else:
+      print('# Split data')
+      print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
+      print('y = train[\'{}\']'.format(param['target']))
+      print('from sklearn.model_selection import train_test_split')
+      print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
+      print('X_test = test.drop([\'id\',], axis=1)')
     if 'RobustScaler' in param and param['RobustScaler']:
       print('from sklearn.preprocessing import RobustScaler')
       print('scaler = RobustScaler()')
     else:
       print('from sklearn.preprocessing import StandardScaler')
       print('scaler = StandardScaler()')
-    print('scaler.fit_transform(df.values)')
+    if 'KFold' in param and param['KFold']:
+      print('scaler.fit_transform(df.values)')
+    else:
+      print('X_train = scaler.fit_transform(X_train)')
+      print('X_valid = scaler.transform(X_valid)')
+      print('X_test = scaler.transform(X_test)')
     if param['type'] == 'LSTM':
       print('# LSTM model')
       print('from tensorflow.keras.layers import LSTM, Dense, Dropout, Input, LeakyReLU, GRU')
@@ -207,16 +221,6 @@ class tabularplaygroundtools:
       print('    y_valid = y.loc[valid_index]')
       print('    X_train = scaler.transform(X_train)')
       print('    X_valid = scaler.transform(X_valid)')
-    else:
-      print('# Split data')
-      print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
-      print('y = train[\'{}\']'.format(param['target']))
-      print('from sklearn.model_selection import train_test_split')
-      print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
-      print('X_test = test.drop([\'id\',], axis=1)')
-      print('X_train = scaler.fit_transform(X_train)')
-      print('X_valid = scaler.transform(X_valid)')
-      print('X_test = scaler.transform(X_test)')
     if param['type'] == 'LSTM':
       print(tab+'# reshape for LSTM')
       print(tab+'X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))')
