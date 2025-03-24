@@ -33,8 +33,8 @@ class tabularplaygroundtools:
         param['test.file'] = aa[0]
         print('# test: {}'.format(param['test.file']))
       else:
-      print('ERROR: test.file')
-      return
+        print('ERROR: test.file')
+        return
     print('# Loading Data')
     print('import pandas as pd')
     print('train = pd.read_csv(\'{}\')'.format(param['train.file']))
