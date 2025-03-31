@@ -102,16 +102,16 @@ class tabularplaygroundtools:
       print('X_valid = scaler.transform(X_valid)')
       print('X_test = scaler.transform(X_test)')
     print('############################################################')
-    if param['type'] == 'LSTM':
-      model_LSTM()
-    elif param['type'] == 'Tensorflow':
-      model_Tensorflow()
-    elif param['type'] == 'PyTorch':
-      model_PyTorch()
-    elif param['type'] == 'XGBoost':
-      model_XGBoost()
-    else:
-      print('unknown type')
+    # if param['type'] == 'LSTM':
+    #   model_LSTM()
+    # elif param['type'] == 'Tensorflow':
+    #   model_Tensorflow()
+    # elif param['type'] == 'PyTorch':
+    #   model_PyTorch()
+    # elif param['type'] == 'XGBoost':
+    #   model_XGBoost()
+    # else:
+    #   print('unknown type')
     print('############################################################')
     print('%%time')
     print('pred = np.zeros(len(test))')
