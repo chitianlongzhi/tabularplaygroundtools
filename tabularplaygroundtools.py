@@ -198,6 +198,7 @@ class tabularplaygroundtools:
     print('############################################################')
     print('submission = test[[\'id\', \'{}\']]'.format(param['target']))
     print('submission.to_csv(\'submission.csv\', index=False)')
+
   def prepare_scaling(self):
     print('############################################################')
     print('# Scaling')
