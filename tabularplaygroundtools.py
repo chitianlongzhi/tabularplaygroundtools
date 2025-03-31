@@ -88,7 +88,8 @@ class tabularplaygroundtools:
       print('plt.show()')
     print('############################################################')
     if 'KFold' in param and param['KFold']:
-      prepare_scaling()
+      #prepare_scaling()
+      pass
     else:
       print('# Split data')
       print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(param['target']))
@@ -96,7 +97,7 @@ class tabularplaygroundtools:
       print('from sklearn.model_selection import train_test_split')
       print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
       print('X_test = test.drop([\'id\',], axis=1)')
-      prepare_scaling()
+      #prepare_scaling()
       print('X_train = scaler.transform(X_train)')
       print('X_valid = scaler.transform(X_valid)')
       print('X_test = scaler.transform(X_test)')
