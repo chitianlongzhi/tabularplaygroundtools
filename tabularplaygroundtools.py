@@ -53,7 +53,6 @@ class tabularplaygroundtools:
         return
     print('############################################################')
     print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
-    print('dfx = df.drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
     print('############################################################')
     print('# Missing Values')
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
@@ -209,7 +208,7 @@ class tabularplaygroundtools:
     else:
       print('from sklearn.preprocessing import StandardScaler')
       print('scaler = StandardScaler()')
-    print('scaler.fit(dfx.values)')
+    print('scaler.fit(df.values)')
   def model_LSTM(self):
     print('# LSTM model')
     print('from tensorflow.keras.layers import LSTM, Dense, Dropout, Input, LeakyReLU, GRU')
