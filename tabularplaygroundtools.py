@@ -217,7 +217,7 @@ class tabularplaygroundtools:
     print(tab+'    callbacks=[early_stopping, reduce_lr],')
     print(tab+'    verbose=1')
     print(tab+')')
-    print(tab+pred+' model.predict(X_test)[0]')
+    print(tab+pred+' model.predict(X_test)')
   def model_Tensorflow(self):
     print('# Tensorflow model')
     print('import warnings')
