@@ -130,23 +130,23 @@ class tabularplaygroundtools:
       print('    X_train = scaler.transform(X_train)')
       print('    X_valid = scaler.transform(X_valid)')
       if self.param['type'] == 'LSTM':
-        fit_LSTM(tab='    ', pred='pred +=')
+        self.fit_LSTM(tab='    ', pred='pred +=')
       elif self.param['type'] == 'Tensorflow':
-        fit_Tensorflow(tab='    ', pred='pred +=')
+        self.fit_Tensorflow(tab='    ', pred='pred +=')
       elif self.param['type'] == 'PyTorch':
-        fit_PyTorch(tab='    ', pred='pred +=')
+        self.fit_PyTorch(tab='    ', pred='pred +=')
       elif self.param['type'] == 'XGBoost':
-        fit_XGBoost(tab='    ', pred='pred +=')
+        self.fit_XGBoost(tab='    ', pred='pred +=')
       print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
     else:
       if self.param['type'] == 'LSTM':
-        fit_LSTM(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_LSTM(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
       elif self.param['type'] == 'Tensorflow':
-        fit_Tensorflow(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_Tensorflow(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
       elif self.param['type'] == 'PyTorch':
-        fit_PyTorch(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_PyTorch(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
       elif self.param['type'] == 'XGBoost':
-        fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
     print('############################################################')
     print('submission = test[[\'id\', \'{}\']]'.format(self.param['target']))
     print('submission.to_csv(\'submission.csv\', index=False)')
