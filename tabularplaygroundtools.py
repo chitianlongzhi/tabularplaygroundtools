@@ -114,6 +114,7 @@ class tabularplaygroundtools:
       print('unknown type')
     print('############################################################')
     print('%%time')
+    print('import numpy as np')
     print('pred = np.zeros(len(test))')
     tab = ''
     if 'KFold' in self.param and self.param['KFold']:
