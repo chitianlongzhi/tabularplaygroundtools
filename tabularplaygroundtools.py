@@ -98,9 +98,9 @@ class tabularplaygroundtools:
       print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
       print('X_test = test.drop([\'id\',], axis=1)')
       self.prepare_scaling()
-      print('X_train = scaler.transform(X_train)')
-      print('X_valid = scaler.transform(X_valid)')
-      print('X_test = scaler.transform(X_test)')
+      print('X_train = scaler.transform(X_train.values)')
+      print('X_valid = scaler.transform(X_valid.values)')
+      print('X_test = scaler.transform(X_test.values)')
     print('############################################################')
     if self.param['type'] == 'LSTM':
       self.model_LSTM()
