@@ -67,11 +67,11 @@ class tabularplaygroundtools:
         if v>0:
           print('test[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
     else:
-      print('print(train.isnull().sum())')
+      # print('print(train.isnull().sum())')
       for c, v in train.isnull().sum().items():
         if v>0:
           print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
-      print('print(test.isnull().sum())')
+      # print('print(test.isnull().sum())')
       for c, v in test.isnull().sum().items():
         if v>0:
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
@@ -129,8 +129,8 @@ class tabularplaygroundtools:
       print('    y_train = y.loc[train_index]')
       print('    X_valid = X.loc[valid_index,:].copy()')
       print('    y_valid = y.loc[valid_index]')
-      print('    X_train = scaler.transform(X_train)')
-      print('    X_valid = scaler.transform(X_valid)')
+      print('    X_train = scaler.transform(X_train.values)')
+      print('    X_valid = scaler.transform(X_valid.values)')
       if self.param['type'] == 'LSTM':
         self.fit_LSTM(tab='    ', pred='pred +=')
       elif self.param['type'] == 'Tensorflow':
@@ -219,7 +219,7 @@ class tabularplaygroundtools:
     print(tab+'    callbacks=[early_stopping, reduce_lr],')
     print(tab+'    verbose=1')
     print(tab+')')
-    print(tab+pred+' model.predict(X_test)')
+    print(tab+pred+' model.predict(X_test)[0]')
   def model_Tensorflow(self):
     print('# Tensorflow model')
     print('import warnings')
