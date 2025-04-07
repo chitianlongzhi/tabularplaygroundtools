@@ -255,6 +255,7 @@ class tabularplaygroundtools:
   def model_PyTorch(self):
     print('# PyTorch model')
     print('import torch')
+    print('import numpy as np')
     print('device=\'cuda\' if torch.cuda.is_available() else \'cpu\'')
     print('class LogisticRegressionModel(torch.nn.Module):')
     print('    def __init__(self):')
