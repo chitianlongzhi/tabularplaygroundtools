@@ -2,7 +2,7 @@
 # !git clone https://github.com/chitianlongzhi/tabularplaygroundtools.git
 # !cat tabularplaygroundtools/tabularplaygroundtools.py
 # import tabularplaygroundtools.tabularplaygroundtools
-# self.param = {
+# param = {
 #     'train.file': '/kaggle/input/playground-series-s5e3/train.csv',
 #     'test.file': '/kaggle/input/playground-series-s5e3/test.csv',
 #     'CorrelationAnalysis': False,
@@ -11,7 +11,7 @@
 #     'KFold': True,
 #     'type': 'LSTM' # Tensorflow, PyTorch, XGBoost
 # }
-# tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(self.param)
+# tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
 import glob
 class tabularplaygroundtools:
