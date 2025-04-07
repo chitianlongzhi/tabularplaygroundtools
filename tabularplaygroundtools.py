@@ -132,7 +132,7 @@ class tabularplaygroundtools:
       print('    X_train = scaler.transform(X_train.values)')
       print('    X_valid = scaler.transform(X_valid.values)')
       if self.param['type'] == 'LSTM':
-        self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[:,1]')
+        self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[0]')
       elif self.param['type'] == 'Tensorflow':
         self.fit_Tensorflow(tab='    ', pred='pred +=')
       elif self.param['type'] == 'PyTorch':
