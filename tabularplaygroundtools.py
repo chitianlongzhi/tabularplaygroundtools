@@ -136,7 +136,7 @@ class tabularplaygroundtools:
       elif self.param['type'] == 'Tensorflow':
         self.fit_Tensorflow(tab='    ', pred='pred += model.predict(X_test)[0]')
       elif self.param['type'] == 'PyTorch':
-        self.fit_PyTorch(tab='    ', pred='pred +=')
+        self.fit_PyTorch(tab='    ', pred='pred +=  model(X_test_tensor).detach().numpy()[:,0]')
       elif self.param['type'] == 'XGBoost':
         self.fit_XGBoost(tab='    ', pred='pred +=')
       print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
@@ -146,7 +146,7 @@ class tabularplaygroundtools:
       elif self.param['type'] == 'Tensorflow':
         self.fit_Tensorflow(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
       elif self.param['type'] == 'PyTorch':
-        self.fit_PyTorch(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_PyTorch(tab='', pred='test[\'{}\'] = model(X_test_tensor).detach().numpy()'.format(self.param['target']))
       elif self.param['type'] == 'XGBoost':
         self.fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
     print('############################################################')
@@ -302,7 +302,7 @@ class tabularplaygroundtools:
     print(tab+'        loss_valid_list.append(loss_valid.item())')
     print(tab+'    if epoch%100==0:')
     print(tab+'        print(\'{} train loss {}, valid loss {}\'.format(epoch, np.mean(loss_train_list), np.mean(loss_valid_list)))')
-    print(tab+pred+' model(X_test_tensor).detach().numpy()')
+    print(tab+pred)
   def model_XGBoost(self):
     print('# XGBoost model')
     print('from xgboost import XGBClassifier')
