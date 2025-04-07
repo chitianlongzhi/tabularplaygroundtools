@@ -86,11 +86,11 @@ class tabularplaygroundtools:
       print('sns.heatmap(corr, annot=True, cmap=\'coolwarm\')')
       print('plt.title(\'Correlation Heatmap\')')
       print('plt.show()')
-    print('############################################################')
     if 'KFold' in self.param and self.param['KFold']:
       self.prepare_scaling()
-      pass
+      print('X_test = scaler.transform(X_test.values)')
     else:
+      print('############################################################')
       print('# Split data')
       print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
       print('y = train[\'{}\']'.format(self.param['target']))
