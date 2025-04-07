@@ -134,7 +134,7 @@ class tabularplaygroundtools:
       if self.param['type'] == 'LSTM':
         self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[0]')
       elif self.param['type'] == 'Tensorflow':
-        self.fit_Tensorflow(tab='    ', pred='pred +=')
+        self.fit_Tensorflow(tab='    ', pred='pred += model.predict(X_test)[0]')
       elif self.param['type'] == 'PyTorch':
         self.fit_PyTorch(tab='    ', pred='pred +=')
       elif self.param['type'] == 'XGBoost':
@@ -144,7 +144,7 @@ class tabularplaygroundtools:
       if self.param['type'] == 'LSTM':
         self.fit_LSTM(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
       elif self.param['type'] == 'Tensorflow':
-        self.fit_Tensorflow(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_Tensorflow(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
       elif self.param['type'] == 'PyTorch':
         self.fit_PyTorch(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
       elif self.param['type'] == 'XGBoost':
@@ -251,7 +251,7 @@ class tabularplaygroundtools:
     print(tab+'    validation_data=(X_valid, y_valid),')
     print(tab+'    callbacks=callbacks')
     print(tab+')')
-    print(tab+pred+' model.predict(X_test)')
+    print(tab+pred)
   def model_PyTorch(self):
     print('# PyTorch model')
     print('import torch')
