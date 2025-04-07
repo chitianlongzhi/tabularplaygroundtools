@@ -58,11 +58,11 @@ class tabularplaygroundtools:
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
-      print('print(train.isnull().sum())')
+      # print('print(train.isnull().sum())')
       for c, v in train.isnull().sum().items():
         if v>0:
           print('train[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
-      print('print(test.isnull().sum())')
+      # print('print(test.isnull().sum())')
       for c, v in test.isnull().sum().items():
         if v>0:
           print('test[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
@@ -87,6 +87,7 @@ class tabularplaygroundtools:
       print('plt.title(\'Correlation Heatmap\')')
       print('plt.show()')
     if 'KFold' in self.param and self.param['KFold']:
+      print('X_test = test.drop([\'id\',], axis=1)')
       self.prepare_scaling()
       print('X_test = scaler.transform(X_test.values)')
     else:
@@ -113,7 +114,7 @@ class tabularplaygroundtools:
     else:
       print('unknown type')
     print('############################################################')
-    print('%%time')
+    # print('%%time')
     tab = ''
     if 'KFold' in self.param and self.param['KFold']:
       print('import numpy as np')
