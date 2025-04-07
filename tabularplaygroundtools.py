@@ -132,7 +132,7 @@ class tabularplaygroundtools:
       print('    X_train = scaler.transform(X_train.values)')
       print('    X_valid = scaler.transform(X_valid.values)')
       if self.param['type'] == 'LSTM':
-        self.fit_LSTM(tab='    ', pred='pred +=')
+        self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[:,1]')
       elif self.param['type'] == 'Tensorflow':
         self.fit_Tensorflow(tab='    ', pred='pred +=')
       elif self.param['type'] == 'PyTorch':
@@ -142,7 +142,7 @@ class tabularplaygroundtools:
       print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
     else:
       if self.param['type'] == 'LSTM':
-        self.fit_LSTM(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+        self.fit_LSTM(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
       elif self.param['type'] == 'Tensorflow':
         self.fit_Tensorflow(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
       elif self.param['type'] == 'PyTorch':
@@ -219,7 +219,7 @@ class tabularplaygroundtools:
     print(tab+'    callbacks=[early_stopping, reduce_lr],')
     print(tab+'    verbose=1')
     print(tab+')')
-    print(tab+pred+' model.predict(X_test)[0]')
+    print(tab+pred)
   def model_Tensorflow(self):
     print('# Tensorflow model')
     print('import warnings')
