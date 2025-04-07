@@ -271,7 +271,7 @@ class tabularplaygroundtools:
     print('        return x')
     print('model = LogisticRegressionModel().to(device)')
     print('criterion = torch.nn.BCELoss()')
-    print('optimizer = torch.optim.Adam(model.self.parameters(), lr=0.001, eps=1e-08)')
+    print('optimizer = torch.optim.Adam(model.parameters(), lr=0.001, eps=1e-08)')
   def fit_PyTorch(self, tab, pred):
     print(tab+'# reshape for PyTorch')
     print(tab+'X_train_tensor = torch.Tensor(np.float32(X_train)).to(device)')
