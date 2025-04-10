@@ -53,6 +53,22 @@ class tabularplaygroundtools:
         return
     print('############################################################')
     print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
+    object_cols = [col for col in train.columns if train[col].dtype == "object"]
+    if len(object_cols)>0:
+      print('############################################################')
+      print('# category')
+      print('from sklearn.preprocessing import OneHotEncoder')
+      print('encoder = OneHotEncoder(handle_unknown=\'ignore\')')
+      print('object_cols = [col for col in df.columns if df[col].dtype == "object"]')
+      print('encoder.fit(df[object_cols])')
+      print('oh_train = pd.DataFrame(encoder.transform(train[object_cols]))')
+      print('oh_test = pd.DataFrame(encoder.transform(test[object_cols]))')
+      print('oh_train.index = train.index')
+      print('oh_test.index = test.index')
+      print('no_train = train.drop(object_cols, axis=1)')
+      print('no_test = test.drop(object_cols, axis=1)')
+      print('train = pd.concat([no_train, oh_train], axis=1)')
+      print('test = pd.concat([no_test, oh_test], axis=1)')
     print('############################################################')
     print('# Missing Values')
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
