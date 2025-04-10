@@ -58,7 +58,7 @@ class tabularplaygroundtools:
       print('############################################################')
       print('# category')
       print('from sklearn.preprocessing import OneHotEncoder')
-      print('encoder = OneHotEncoder(handle_unknown=\'ignore\')')
+      print('encoder = OneHotEncoder(handle_unknown=\'ignore\', sparse_output=False)')
       print('object_cols = [col for col in df.columns if df[col].dtype == "object"]')
       print('encoder.fit(df[object_cols])')
       print('oh_train = pd.DataFrame(encoder.transform(train[object_cols]))')
@@ -69,6 +69,7 @@ class tabularplaygroundtools:
       print('no_test = test.drop(object_cols, axis=1)')
       print('train = pd.concat([no_train, oh_train], axis=1)')
       print('test = pd.concat([no_test, oh_test], axis=1)')
+      print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
     print('############################################################')
     print('# Missing Values')
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
