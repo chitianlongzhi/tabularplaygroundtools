@@ -352,7 +352,7 @@ class tabularplaygroundtools:
     print('  \'reg_alpha\': 0.35,')
     print('  \'reg_lambda\': 4.0,')
     print('  \'n_estimators\': 50000,')
-    print('  \'enable_categorical': True,}')
+    print('  \'enable_categorical\': True,}')
     print('model = XGBRegressor(**params)')
   def fit_XGBoost(self, tab, pred):
     print(tab+'model.fit(')
