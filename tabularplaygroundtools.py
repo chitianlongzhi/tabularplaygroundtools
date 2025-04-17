@@ -13,6 +13,7 @@
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
+import numpy as np
 import glob
 class tabularplaygroundtools:
   def __init__(self, param):
@@ -128,7 +129,10 @@ class tabularplaygroundtools:
     elif self.param['type'] == 'PyTorch':
       self.model_PyTorch()
     elif self.param['type'] == 'XGBoost':
-      self.model_XGBoost()
+      if train[self.param['target']]==np.float64:
+        self.model_XGBRegressor()
+      else:
+        self.model_XGBClassifier()
     else:
       print('unknown type')
     print('############################################################')
@@ -320,7 +324,7 @@ class tabularplaygroundtools:
     print(tab+'    if epoch%100==0:')
     print(tab+'        print(\'{} train loss {}, valid loss {}\'.format(epoch, np.mean(loss_train_list), np.mean(loss_valid_list)))')
     print(tab+pred)
-  def model_XGBoost(self):
+  def model_XGBClassifier(self):
     print('# XGBoost model')
     print('from xgboost import XGBClassifier')
     #print('import xgboost')
@@ -335,6 +339,21 @@ class tabularplaygroundtools:
     print('    early_stopping_rounds=100,')
     print('    alpha=1,')
     print(')')
+  def model_XGBRegressor(self):
+    print('# XGBoost model')
+    print('from xgboost import XGBRegressor')
+    #print('import xgboost')
+    print('params = {')
+    print('  \'max_depth\': 6,')
+    print('  \'learning_rate\': 0.01,')
+    print('  \'subsample\': 0.8,')
+    print('  \'colsample_bytree\': 0.6,')
+    print('  \'gamma\': 1.0,')
+    print('  \'reg_alpha\': 0.35,')
+    print('  \'reg_lambda\': 4.0,')
+    print('  \'n_estimators\': 50000,')
+    print('  \'enable_categorical': True,}')
+    print('model = XGBRegressor(**params)')
   def fit_XGBoost(self, tab, pred):
     print(tab+'model.fit(')
     print(tab+'    X_train, y_train,')
