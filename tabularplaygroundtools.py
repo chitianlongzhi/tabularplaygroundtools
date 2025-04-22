@@ -158,7 +158,7 @@ class tabularplaygroundtools:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
       # print('print(train.isnull().sum())')
-      for c, v in train.isnull().sum().items():
+      for c, v in self.train.isnull().sum().items():
         if v>0:
           print('train[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
       # print('print(test.isnull().sum())')
@@ -167,7 +167,7 @@ class tabularplaygroundtools:
           print('test[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
     else:
       # print('print(train.isnull().sum())')
-      for c, v in train.isnull().sum().items():
+      for c, v in self.train.isnull().sum().items():
         if v>0:
           print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
       # print('print(test.isnull().sum())')
