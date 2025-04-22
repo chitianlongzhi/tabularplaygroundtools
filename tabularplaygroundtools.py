@@ -49,7 +49,7 @@ class tabularplaygroundtools:
     elif self.param['model'] == 'PyTorch':
       self.model_PyTorch()
     elif self.param['model'] == 'XGBoost':
-      if type(train[self.param['target']][0]) == np.float64:
+      if type(self.train[self.param['target']][0]) == np.float64:
         self.param['type'] = 'Regressor'
         self.model_XGBRegressor()
       else:
