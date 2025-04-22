@@ -98,7 +98,7 @@ class tabularplaygroundtools:
   def check_param(self):
     if not 'model' in self.param:
       print('ERROR: model')
-      return
+      return False
     if not 'train.file' in self.param:
       aa = glob.glob('/kaggle/input/*/train.csv')
       if len(aa)==1:
@@ -106,7 +106,7 @@ class tabularplaygroundtools:
         print('# train: {}'.format(self.param['train.file']))
       else:
         print('ERROR: train.file')
-        return
+        return False
     if not 'test.file' in self.param:
       aa = glob.glob('/kaggle/input/*/test.csv')
       if len(aa)==1:
@@ -114,7 +114,8 @@ class tabularplaygroundtools:
         print('# test: {}'.format(self.param['test.file']))
       else:
         print('ERROR: test.file')
-        return
+        return False
+    return True
   def loading_data(self):
     print('############################################################')
     print('# Loading Data')
