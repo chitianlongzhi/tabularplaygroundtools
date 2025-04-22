@@ -162,7 +162,7 @@ class tabularplaygroundtools:
         if v>0:
           print('train[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
       # print('print(test.isnull().sum())')
-      for c, v in test.isnull().sum().items():
+      for c, v in self.test.isnull().sum().items():
         if v>0:
           print('test[[\'{}\']] = imputer.fit_transform(df[[\'{}\']])'.format(c, c))
     else:
@@ -171,7 +171,7 @@ class tabularplaygroundtools:
         if v>0:
           print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
       # print('print(test.isnull().sum())')
-      for c, v in test.isnull().sum().items():
+      for c, v in self.test.isnull().sum().items():
         if v>0:
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
   def correlation_analysis(self):
