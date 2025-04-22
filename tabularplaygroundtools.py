@@ -9,7 +9,7 @@
 #     'SimpleImputer': False,
 #     'RobustScaler': False,
 #     'KFold': True,
-#     'type': 'LSTM' # Tensorflow, PyTorch, XGBoost
+#     'model': 'LSTM' # Tensorflow, PyTorch, XGBoost
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
@@ -18,8 +18,86 @@ import glob
 class tabularplaygroundtools:
   def __init__(self, param):
     self.param = param
-    if not 'type' in self.param:
-      print('ERROR: type')
+    if not self.check_param():
+      return
+    self.loading_data()
+    self.check_category()
+    self.missing_values()
+    self.correlation_analysis()
+    print('############################################################')
+    print('# Choose columns')
+    print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
+    print('y = train[\'{}\']'.format(self.param['target']))
+    print('X_test = test.drop([\'id\',], axis=1)')
+    if 'KFold' in self.param and self.param['KFold']:
+      self.prepare_scaling()
+      print('X_test = scaler.transform(X_test.values)')
+    else:
+      print('# Split data')
+      print('from sklearn.model_selection import train_test_split')
+      print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
+      print('X_test = test.drop([\'id\',], axis=1)')
+      self.prepare_scaling()
+      print('X_train = scaler.transform(X_train.values)')
+      print('X_valid = scaler.transform(X_valid.values)')
+      print('X_test = scaler.transform(X_test.values)')
+    print('############################################################')
+    if self.param['model'] == 'LSTM':
+      self.model_LSTM()
+    elif self.param['model'] == 'Tensorflow':
+      self.model_Tensorflow()
+    elif self.param['model'] == 'PyTorch':
+      self.model_PyTorch()
+    elif self.param['model'] == 'XGBoost':
+      if type(train[self.param['target']][0]) == np.float64:
+        self.param['type'] = 'Regressor'
+        self.model_XGBRegressor()
+      else:
+        self.param['type'] = 'Classifier'
+        self.model_XGBClassifier()
+    else:
+      print('unknown model')
+    print('############################################################')
+    # print('%%time')
+    tab = ''
+    if 'KFold' in self.param and self.param['KFold']:
+      print('import numpy as np')
+      print('from sklearn.model_selection import KFold')
+      print('FOLDS = 5')
+      print('kf = KFold(n_splits=FOLDS, shuffle=True, random_state=42)')
+      print('oof = np.zeros(len(train))')
+      print('pred = np.zeros(len(test))')
+      print('for i, (train_index, valid_index) in enumerate(kf.split(train)):')
+      print('    X_train = X.loc[train_index,:].copy()')
+      print('    y_train = y.loc[train_index]')
+      print('    X_valid = X.loc[valid_index,:].copy()')
+      print('    y_valid = y.loc[valid_index]')
+      print('    X_train = scaler.transform(X_train.values)')
+      print('    X_valid = scaler.transform(X_valid.values)')
+      if self.param['model'] == 'LSTM':
+        self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[0]')
+      elif self.param['model'] == 'Tensorflow':
+        self.fit_Tensorflow(tab='    ', pred='pred += model.predict(X_test)[0]')
+      elif self.param['model'] == 'PyTorch':
+        self.fit_PyTorch(tab='    ', pred='pred +=  model(X_test_tensor).detach().numpy()[:,0]')
+      elif self.param['model'] == 'XGBoost':
+        self.fit_XGBoost(tab='    ', pred='pred +=')
+      print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
+    else:
+      if self.param['model'] == 'LSTM':
+        self.fit_LSTM(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
+      elif self.param['model'] == 'Tensorflow':
+        self.fit_Tensorflow(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
+      elif self.param['model'] == 'PyTorch':
+        self.fit_PyTorch(tab='', pred='test[\'{}\'] = model(X_test_tensor).detach().numpy()'.format(self.param['target']))
+      elif self.param['model'] == 'XGBoost':
+        self.fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+    print('############################################################')
+    print('submission = test[[\'id\', \'{}\']]'.format(self.param['target']))
+    print('submission.to_csv(\'submission.csv\', index=False)')
+  def check_param(self):
+    if not 'model' in self.param:
+      print('ERROR: model')
       return
     if not 'train.file' in self.param:
       aa = glob.glob('/kaggle/input/*/train.csv')
@@ -37,24 +115,25 @@ class tabularplaygroundtools:
       else:
         print('ERROR: test.file')
         return
+  def loading_data(self):
     print('############################################################')
     print('# Loading Data')
     print('import pandas as pd')
     print('train = pd.read_csv(\'{}\')'.format(self.param['train.file']))
-    train = pd.read_csv(self.param['train.file'])
+    self.train = pd.read_csv(self.param['train.file'])
     print('test = pd.read_csv(\'{}\')'.format(self.param['test.file']))
-    test = pd.read_csv(self.param['test.file'])
+    self.test = pd.read_csv(self.param['test.file'])
     if not 'target' in self.param:
-      tt = set(train.columns) - set(test.columns)
+      tt = set(self.train.columns) - set(self.test.columns)
       if len(tt)==1:
         self.param['target'] = tt.pop()
         print('# target: {}'.format(self.param['target']))
       else:
         print('ERROR: target')
         return
-    print('############################################################')
     print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
-    object_cols = [col for col in train.columns if train[col].dtype == "object"]
+  def check_category(self):
+    object_cols = [col for col in self.train.columns if self.train[col].dtype == "object"]
     if len(object_cols)>0:
       print('############################################################')
       print('# category')
@@ -71,6 +150,7 @@ class tabularplaygroundtools:
       print('train = pd.concat([no_train, oh_train], axis=1)')
       print('test = pd.concat([no_test, oh_test], axis=1)')
       print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
+  def missing_values(self):
     print('############################################################')
     print('# Missing Values')
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
@@ -93,6 +173,7 @@ class tabularplaygroundtools:
       for c, v in test.isnull().sum().items():
         if v>0:
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
+  def correlation_analysis(self):
     if 'CorrelationAnalysis' in self.param and self.param['CorrelationAnalysis']:
       print('############################################################')
       print('# Correlation Analysis')
@@ -104,75 +185,6 @@ class tabularplaygroundtools:
       print('sns.heatmap(corr, annot=True, cmap=\'coolwarm\')')
       print('plt.title(\'Correlation Heatmap\')')
       print('plt.show()')
-    print('############################################################')
-    print('# Choose columns')
-    print('X = train.drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
-    print('y = train[\'{}\']'.format(self.param['target']))
-    print('X_test = test.drop([\'id\',], axis=1)')
-    if 'KFold' in self.param and self.param['KFold']:
-      self.prepare_scaling()
-      print('X_test = scaler.transform(X_test.values)')
-    else:
-      print('# Split data')
-      print('from sklearn.model_selection import train_test_split')
-      print('X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=1)')
-      print('X_test = test.drop([\'id\',], axis=1)')
-      self.prepare_scaling()
-      print('X_train = scaler.transform(X_train.values)')
-      print('X_valid = scaler.transform(X_valid.values)')
-      print('X_test = scaler.transform(X_test.values)')
-    print('############################################################')
-    if self.param['type'] == 'LSTM':
-      self.model_LSTM()
-    elif self.param['type'] == 'Tensorflow':
-      self.model_Tensorflow()
-    elif self.param['type'] == 'PyTorch':
-      self.model_PyTorch()
-    elif self.param['type'] == 'XGBoost':
-      if type(train[self.param['target']][0]) == np.float64:
-        self.model_XGBRegressor()
-      else:
-        self.model_XGBClassifier()
-    else:
-      print('unknown type')
-    print('############################################################')
-    # print('%%time')
-    tab = ''
-    if 'KFold' in self.param and self.param['KFold']:
-      print('import numpy as np')
-      print('from sklearn.model_selection import KFold')
-      print('FOLDS = 5')
-      print('kf = KFold(n_splits=FOLDS, shuffle=True, random_state=42)')
-      print('oof = np.zeros(len(train))')
-      print('pred = np.zeros(len(test))')
-      print('for i, (train_index, valid_index) in enumerate(kf.split(train)):')
-      print('    X_train = X.loc[train_index,:].copy()')
-      print('    y_train = y.loc[train_index]')
-      print('    X_valid = X.loc[valid_index,:].copy()')
-      print('    y_valid = y.loc[valid_index]')
-      print('    X_train = scaler.transform(X_train.values)')
-      print('    X_valid = scaler.transform(X_valid.values)')
-      if self.param['type'] == 'LSTM':
-        self.fit_LSTM(tab='    ', pred='pred += model.predict(X_test)[0]')
-      elif self.param['type'] == 'Tensorflow':
-        self.fit_Tensorflow(tab='    ', pred='pred += model.predict(X_test)[0]')
-      elif self.param['type'] == 'PyTorch':
-        self.fit_PyTorch(tab='    ', pred='pred +=  model(X_test_tensor).detach().numpy()[:,0]')
-      elif self.param['type'] == 'XGBoost':
-        self.fit_XGBoost(tab='    ', pred='pred +=')
-      print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
-    else:
-      if self.param['type'] == 'LSTM':
-        self.fit_LSTM(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
-      elif self.param['type'] == 'Tensorflow':
-        self.fit_Tensorflow(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
-      elif self.param['type'] == 'PyTorch':
-        self.fit_PyTorch(tab='', pred='test[\'{}\'] = model(X_test_tensor).detach().numpy()'.format(self.param['target']))
-      elif self.param['type'] == 'XGBoost':
-        self.fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
-    print('############################################################')
-    print('submission = test[[\'id\', \'{}\']]'.format(self.param['target']))
-    print('submission.to_csv(\'submission.csv\', index=False)')
   def prepare_scaling(self):
     print('############################################################')
     print('# Scaling')
@@ -360,7 +372,7 @@ class tabularplaygroundtools:
     print(tab+'    eval_set=[(X_valid, y_valid)],')
     print(tab+'    verbose=100')
     print(tab+')')
-    #print(tab+'oof[valid_index] = model.predict_proba(X_valid)[:,1]')
-    print(tab+pred+' model.predict_proba(X_test)[:,1]')
-    #print('m = roc_auc_score(train[\'{}\'].values, oof)'.format(self.param['target']))
-    #print('print(f\'XGBoost CV Score AUC = {m:.3f}\')')
+    if self.param['type'] == 'Regressor':
+      print(tab+pred+' model.predict(X_test)')
+    elif self.param['type'] == 'Classifier':
+      print(tab+pred+' model.predict_proba(X_test)[:,1]')
