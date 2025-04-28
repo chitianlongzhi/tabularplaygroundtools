@@ -42,6 +42,10 @@ class tabularplaygroundtools:
       print('X_valid = scaler.transform(X_valid.values)')
       print('X_test = scaler.transform(X_test.values)')
     print('############################################################')
+    if type(self.train[self.param['target']][0]) == np.float64:
+      self.param['type'] = 'Regressor'
+    else:
+      self.param['type'] = 'Classifier'
     if self.param['model'] == 'LSTM':
       self.model_LSTM()
     elif self.param['model'] == 'Tensorflow':
@@ -49,12 +53,10 @@ class tabularplaygroundtools:
     elif self.param['model'] == 'PyTorch':
       self.model_PyTorch()
     elif self.param['model'] == 'XGBoost':
-      if type(self.train[self.param['target']][0]) == np.float64:
-        self.param['type'] = 'Regressor'
-        self.model_XGBRegressor()
-      else:
-        self.param['type'] = 'Classifier'
+      if self.param['type'] == 'Classifier':
         self.model_XGBClassifier()
+      else:
+        self.model_XGBRegressor()
     else:
       print('unknown model')
     print('############################################################')
@@ -291,9 +293,9 @@ class tabularplaygroundtools:
     print('import torch')
     print('import numpy as np')
     print('device=\'cuda\' if torch.cuda.is_available() else \'cpu\'')
-    print('class LogisticRegressionModel(torch.nn.Module):')
+    print('class DNNmodel(torch.nn.Module):')
     print('    def __init__(self):')
-    print('        super(LogisticRegressionModel, self).__init__()')
+    print('        super(DNNmodel, self).__init__()')
     print('        self.linear1 = torch.nn.Linear(X.shape[1], 128)')
     print('        self.dropout = torch.nn.Dropout(0.25)')
     print('        self.linear2 = torch.nn.Linear(128, 1)')
@@ -302,10 +304,14 @@ class tabularplaygroundtools:
     print('        x = torch.relu(x)')
     print('        x = self.dropout(x)')
     print('        x = self.linear2(x)')
-    print('        x = torch.sigmoid(x)')
+    if self.param['type'] == 'Classifier':
+      print('        x = torch.sigmoid(x)')
     print('        return x')
-    print('model = LogisticRegressionModel().to(device)')
-    print('criterion = torch.nn.BCELoss()')
+    print('model = DNNmodel().to(device)')
+    if self.param['type'] == 'Classifier':
+      print('criterion = torch.nn.BCELoss()')
+    else:
+      print('criterion = torch.nn.MSELoss()')
     print('optimizer = torch.optim.Adam(model.parameters(), lr=0.001, eps=1e-08)')
   def fit_PyTorch(self, tab, pred):
     print(tab+'# reshape for PyTorch')
