@@ -3,13 +3,11 @@
 # !cat tabularplaygroundtools/tabularplaygroundtools.py
 # import tabularplaygroundtools.tabularplaygroundtools
 # param = {
-#     'train.file': '/kaggle/input/playground-series-s5e3/train.csv',
-#     'test.file': '/kaggle/input/playground-series-s5e3/test.csv',
 #     'CorrelationAnalysis': False,
 #     'SimpleImputer': False,
 #     'RobustScaler': False,
-#     'KFold': True,
-#     'model': 'LSTM' # Tensorflow, PyTorch, XGBoost
+#     'KFold': False,
+#     'model': 'XGBoost' # LSTM, Tensorflow, PyTorch, XGBoost
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
@@ -370,7 +368,7 @@ class tabularplaygroundtools:
     print('  \'gamma\': 1.0,')
     print('  \'reg_alpha\': 0.35,')
     print('  \'reg_lambda\': 4.0,')
-    print('  \'n_estimators\': 50000,')
+    print('  \'n_estimators\': 5000,')
     print('  \'enable_categorical\': True,}')
     print('model = XGBRegressor(**params)')
   def fit_XGBoost(self, tab, pred):
