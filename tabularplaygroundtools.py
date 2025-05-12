@@ -87,7 +87,6 @@ class tabularplaygroundtools:
         self.fit_PyTorch(tab='    ', pred='pred +=  model(X_test_tensor).detach().numpy()[:,0]')
       elif self.param['model'] == 'XGBoost':
         self.fit_XGBoost(tab='    ', pred='pred +=')
-      print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
       elif self.param['model'] == 'CatBoost':
         self.fit_CatBoost(tab='    ', pred='pred +=')
       print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
