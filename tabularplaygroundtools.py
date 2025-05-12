@@ -391,9 +391,9 @@ class tabularplaygroundtools:
       print(tab+pred+' model.predict(X_test)')
     elif self.param['type'] == 'Classifier':
       print(tab+pred+' model.predict_proba(X_test)[:,1]')
-  def model_CatClassifier(self):
+  def model_CatBoostClassifier(self):
     print('# CatBoost model ... out of support now')
-  def model_CatRegressor(self):
+  def model_CatBoostRegressor(self):
     print('# CatBoost model')
     print('from catboost import CatBoostRegressor')
     print('params = {')
