@@ -7,7 +7,7 @@
 #     'SimpleImputer': False,
 #     'RobustScaler': False,
 #     'KFold': False,
-#     'model': 'XGBoost' # LSTM, Tensorflow, PyTorch, XGBoost
+#     'model': 'XGBoost' # LSTM, Tensorflow, PyTorch, XGBoost, CatBoost
 # }
 # tabularplaygroundtools.tabularplaygroundtools.tabularplaygroundtools(param)
 import pandas as pd
@@ -55,6 +55,11 @@ class tabularplaygroundtools:
         self.model_XGBClassifier()
       else:
         self.model_XGBRegressor()
+    elif self.param['model'] == 'CatBoost':
+      if self.param['type'] == 'Classifier':
+        self.model_CatBoostClassifier()
+      else:
+        self.model_CatBoostRegressor()
     else:
       print('unknown model')
     print('############################################################')
@@ -83,6 +88,9 @@ class tabularplaygroundtools:
       elif self.param['model'] == 'XGBoost':
         self.fit_XGBoost(tab='    ', pred='pred +=')
       print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
+      elif self.param['model'] == 'CatBoost':
+        self.fit_CatBoost(tab='    ', pred='pred +=')
+      print('test[\'{}\'] = pred / FOLDS'.format(self.param['target']))
     else:
       if self.param['model'] == 'LSTM':
         self.fit_LSTM(tab='', pred='test[\'{}\'] = model.predict(X_test)'.format(self.param['target']))
@@ -92,6 +100,8 @@ class tabularplaygroundtools:
         self.fit_PyTorch(tab='', pred='test[\'{}\'] = model(X_test_tensor).detach().numpy()'.format(self.param['target']))
       elif self.param['model'] == 'XGBoost':
         self.fit_XGBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
+      elif self.param['model'] == 'CatBoost':
+        self.fit_CatBoost(tab='', pred='test[\'{}\'] ='.format(self.param['target']))
     print('############################################################')
     print('submission = test[[\'id\', \'{}\']]'.format(self.param['target']))
     print('submission.to_csv(\'submission.csv\', index=False)')
@@ -141,6 +151,7 @@ class tabularplaygroundtools:
       print('from sklearn.preprocessing import OneHotEncoder')
       print('encoder = OneHotEncoder(handle_unknown=\'ignore\', sparse_output=False)')
       print('object_cols = [col for col in df.columns if df[col].dtype == "object"]')
+      print('print(object_cols)')
       print('encoder.fit(df[object_cols])')
       print('oh_train = pd.DataFrame(encoder.transform(train[object_cols]))')
       print('oh_test = pd.DataFrame(encoder.transform(test[object_cols]))')
@@ -372,6 +383,39 @@ class tabularplaygroundtools:
     print('  \'enable_categorical\': True,}')
     print('model = XGBRegressor(**params)')
   def fit_XGBoost(self, tab, pred):
+    print(tab+'model.fit(')
+    print(tab+'    X_train, y_train,')
+    print(tab+'    eval_set=[(X_valid, y_valid)],')
+    print(tab+'    verbose=100')
+    print(tab+')')
+    if self.param['type'] == 'Regressor':
+      print(tab+pred+' model.predict(X_test)')
+    elif self.param['type'] == 'Classifier':
+      print(tab+pred+' model.predict_proba(X_test)[:,1]')
+//
+  def model_CatClassifier(self):
+    print('# CatBoost model ... out of support now')
+  def model_CatRegressor(self):
+    print('# CatBoost model')
+    print('from catboost import CatBoostRegressor')
+    print('params = {')
+    print('    \'iterations\': 3000,')
+    print('    \'learning_rate\': 0.02,')
+    print('    \'depth\': 12,')
+    print('    #\'bootstrap_type\':\'Bernoulli\',')
+    print('    #\'grow_policy\':\'Lossguide\',')
+    print('    #\'boosting_type\':\'Plain\',')
+    print('    \'loss_function\': \'RMSE\',')
+    print('    \'l2_leaf_reg\': 3,')
+    print('    \'random_seed\': 42,')
+    print('    \'eval_metric\': \'RMSE\',')
+    print('    \'early_stopping_rounds\': 200,')
+    print('    #\'cat_features\': object_cols,')
+    print('    \'verbose\': 100,')
+    print('    \'task_type\': \'CPU\',')
+    print('}')
+    print('model = CatBoostRegressor(**params)')
+  def fit_CatBoost(self, tab, pred):
     print(tab+'model.fit(')
     print(tab+'    X_train, y_train,')
     print(tab+'    eval_set=[(X_valid, y_valid)],')
