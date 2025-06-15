@@ -42,6 +42,8 @@ class tabularplaygroundtools:
     print('############################################################')
     if type(self.train[self.param['target']][0]) == np.float64:
       self.param['type'] = 'Regressor'
+    elif type(self.train[self.param['target']][0]) == str:
+      self.param['type'] = 'Regressor'
     else:
       self.param['type'] = 'Classifier'
     if self.param['model'] == 'LSTM':
