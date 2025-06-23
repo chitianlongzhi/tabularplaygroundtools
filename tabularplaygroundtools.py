@@ -163,6 +163,9 @@ class tabularplaygroundtools:
       print('train = pd.concat([no_train, oh_train], axis=1)')
       print('test = pd.concat([no_test, oh_test], axis=1)')
       print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
+      print('for col in oh_train.columns:')
+      print('  train[col] = train[col].astype(\'category\')')
+      print('  test[col] = test[col].astype(\'category\')')
     if self.train[self.param['target']].dtype == "object":
       self.param['target_object'] = True
       # print('from sklearn.preprocessing import OrdinalEncoder')
@@ -170,7 +173,7 @@ class tabularplaygroundtools:
       # print('train[[\'{}\']] = pd.DataFrame(ordinal_encoder.fit_transform(train[[\'{}\']]))'.format(self.param['target'], self.param['target']))
       print('from sklearn.preprocessing import LabelEncoder')
       print('label_encoder = LabelEncoder()')
-      print('train[[\'{}\']] = pd.DataFrame(label_encoder.fit_transform(train[[\'{}\']]))'.format(self.param['target'], self.param['target']))
+      print('train[[\'{}\']] = pd.DataFrame(label_encoder.fit_transform(train[\'{}\'].values))'.format(self.param['target'], self.param['target']))
   def missing_values(self):
     print('############################################################')
     print('# Missing Values')
@@ -389,7 +392,12 @@ class tabularplaygroundtools:
     print('  \'reg_alpha\': 0.35,')
     print('  \'reg_lambda\': 4.0,')
     print('  \'n_estimators\': 5000,')
-    print('  \'enable_categorical\': True,}')
+    print('  \'enable_categorical\': True,')
+    if 'target_object' in self.param and self.param['target_object']:
+      print('  \'tree_method\': \'hist\',')
+      print('  \'objective\': \'multi:softmax\',')
+      print('  \'num_class\': len(label_encoder.classes_),')
+    print('}')
     print('model = XGBRegressor(**params)')
   def fit_XGBoost(self, tab, pred):
     print(tab+'model.fit(')
@@ -398,7 +406,10 @@ class tabularplaygroundtools:
     print(tab+'    verbose=100')
     print(tab+')')
     if self.param['type'] == 'Regressor':
-      print(tab+pred+' model.predict(X_test)')
+      if 'target_object' in self.param and self.param['target_object']:
+        print(tab+pred+' label_encoder.inverse_transform(model.predict(X_test).astype(int))')
+      else:
+        print(tab+pred+' model.predict(X_test)')
     elif self.param['type'] == 'Classifier':
       print(tab+pred+' model.predict_proba(X_test)[:,1]')
   def model_CatBoostClassifier(self):
