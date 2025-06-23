@@ -165,9 +165,12 @@ class tabularplaygroundtools:
       print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
     if self.train[self.param['target']].dtype == "object":
       self.param['target_object'] = True
-      print('from sklearn.preprocessing import OrdinalEncoder')
-      print('ordinal_encoder = OrdinalEncoder()')
-      print('train[[\'{}\']] = pd.DataFrame(ordinal_encoder.fit_transform(train[[\'{}\']]))'.format(self.param['target'], self.param['target']))
+      # print('from sklearn.preprocessing import OrdinalEncoder')
+      # print('ordinal_encoder = OrdinalEncoder()')
+      # print('train[[\'{}\']] = pd.DataFrame(ordinal_encoder.fit_transform(train[[\'{}\']]))'.format(self.param['target'], self.param['target']))
+      print('from sklearn.preprocessing import LabelEncoder')
+      print('label_encoder = LabelEncoder()')
+      print('train[[\'{}\']] = pd.DataFrame(label_encoder.fit_transform(train[[\'{}\']]))'.format(self.param['target'], self.param['target']))
   def missing_values(self):
     print('############################################################')
     print('# Missing Values')
