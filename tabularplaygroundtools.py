@@ -177,7 +177,6 @@ class tabularplaygroundtools:
   def missing_values(self):
     print('############################################################')
     print('# Missing Values')
-    print(self.param['object_cols'])
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
