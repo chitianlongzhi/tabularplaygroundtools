@@ -145,21 +145,21 @@ class tabularplaygroundtools:
         return
     print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
   def check_category(self):
-    object_cols = [col for col in self.train.columns if self.train[col].dtype == "object"]
-    if len(object_cols)>0:
+    self.param['object_cols'] = [col for col in self.train.columns if self.train[col].dtype == "object"]
+    if len(self.param['object_cols'])>0:
       print('############################################################')
       print('# category')
       print('from sklearn.preprocessing import OneHotEncoder')
       print('encoder = OneHotEncoder(handle_unknown=\'ignore\', sparse_output=False)')
-      print('object_cols = [col for col in df.columns if df[col].dtype == "object"]')
-      print('print(object_cols)')
-      print('encoder.fit(df[object_cols])')
-      print('oh_train = pd.DataFrame(encoder.transform(train[object_cols]))')
-      print('oh_test = pd.DataFrame(encoder.transform(test[object_cols]))')
+      print('self.param['object_cols'] = [col for col in df.columns if df[col].dtype == "object"]')
+      print('print(self.param['object_cols'])')
+      print('encoder.fit(df[self.param['object_cols']])')
+      print('oh_train = pd.DataFrame(encoder.transform(train[self.param['object_cols']]))')
+      print('oh_test = pd.DataFrame(encoder.transform(test[self.param['object_cols']]))')
       print('oh_train.index = train.index')
       print('oh_test.index = test.index')
-      print('no_train = train.drop(object_cols, axis=1)')
-      print('no_test = test.drop(object_cols, axis=1)')
+      print('no_train = train.drop(self.param['object_cols'], axis=1)')
+      print('no_test = test.drop(self.param['object_cols'], axis=1)')
       print('train = pd.concat([no_train, oh_train], axis=1)')
       print('test = pd.concat([no_test, oh_test], axis=1)')
       print('df = pd.concat([train, test], axis=0).reset_index(drop=True).drop([\'id\', \'{}\'], axis=1)'.format(self.param['target']))
@@ -177,7 +177,7 @@ class tabularplaygroundtools:
   def missing_values(self):
     print('############################################################')
     print('# Missing Values')
-    print(object_cols)
+    print(self.param['object_cols'])
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
@@ -192,11 +192,11 @@ class tabularplaygroundtools:
     else:
       # print('print(train.isnull().sum())')
       for c, v in self.train.isnull().sum().items():
-        if v>0 and (not c in object_cols):
+        if v>0 and (not c in self.param['object_cols']):
           print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
       # print('print(test.isnull().sum())')
       for c, v in self.test.isnull().sum().items():
-        if v>0 and (not c in object_cols):
+        if v>0 and (not c in self.param['object_cols']):
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
   def correlation_analysis(self):
     if 'CorrelationAnalysis' in self.param and self.param['CorrelationAnalysis']:
@@ -430,7 +430,7 @@ class tabularplaygroundtools:
     print('    \'random_seed\': 42,')
     print('    \'eval_metric\': \'RMSE\',')
     print('    \'early_stopping_rounds\': 200,')
-    print('    #\'cat_features\': object_cols,')
+    print('    #\'cat_features\': self.param['object_cols'],')
     print('    \'verbose\': 100,')
     print('    \'task_type\': \'CPU\',')
     print('}')
