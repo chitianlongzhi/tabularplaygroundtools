@@ -177,6 +177,7 @@ class tabularplaygroundtools:
   def missing_values(self):
     print('############################################################')
     print('# Missing Values')
+    print(object_cols)
     if 'SimpleImputer' in self.param and self.param['SimpleImputer']:
       print('from sklearn.impute import SimpleImputer')
       print('imputer = SimpleImputer(strategy=\'mean\')')
@@ -191,11 +192,11 @@ class tabularplaygroundtools:
     else:
       # print('print(train.isnull().sum())')
       for c, v in self.train.isnull().sum().items():
-        if v>0:
+        if v>0 and (not c in object_cols):
           print('train[\'{}\'] = train[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
       # print('print(test.isnull().sum())')
       for c, v in self.test.isnull().sum().items():
-        if v>0:
+        if v>0 and (not c in object_cols):
           print('test[\'{}\'] = test[\'{}\'].fillna(df[\'{}\'].median())'.format(c, c, c))
   def correlation_analysis(self):
     if 'CorrelationAnalysis' in self.param and self.param['CorrelationAnalysis']:
